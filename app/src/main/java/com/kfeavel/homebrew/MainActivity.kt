@@ -1,7 +1,8 @@
 package com.kfeavel.homebrew
 
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.kfeavel.homebrew.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlin.random.Random.Default.nextInt
@@ -10,6 +11,8 @@ class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var isActive = true
+    private var intro: MediaPlayer? = null
+    private var loop: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,11 +24,30 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         emitBubbles()
         startWaves()
+        startAudio()
     }
 
     override fun onStop() {
         super.onStop()
         isActive = false
+        // Stop audio
+        intro?.stop()
+        intro?.release()
+        loop?.stop()
+        loop?.release()
+    }
+
+    private fun startAudio() {
+        intro = MediaPlayer.create(this, R.raw.intro).also { intro ->
+            intro.setOnCompletionListener {
+                loop = MediaPlayer.create(this@MainActivity, R.raw.loop).also { loop ->
+                    loop.isLooping = true
+                    loop.start()
+                }
+            }
+
+            intro.start()
+        }
     }
 
     private fun startWaves() {
