@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">The Homebrew Channel</string>
+    <string name="app_name_short">Homebrew</string>
 </resources>
